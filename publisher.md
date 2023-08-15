@@ -1,3 +1,4 @@
+
 ## Publicador - PubSub 
 
 O **Google Cloud Pub/Sub** é um serviço de mensagens assíncrono no Google Cloud Platform. Ele permite que aplicativos se comuniquem através de tópicos e assinantes. Os publicadores enviam mensagens para tópicos, e os assinantes se inscrevem nesses tópicos para receber as mensagens. O serviço garante a entrega confiável e escalável das mensagens, permitindo o processamento assíncrono por parte dos assinantes. O Pub/Sub simplifica a comunicação em sistemas distribuídos e lida automaticamente com a entrega de mensagens.
@@ -46,6 +47,7 @@ future = publisher.publish(topic_name, b'My first message!', spam='eggs')
 
 # Aguarda a conclusão da publicação da mensagem
 future.result()
-
-
 ```
+Após a publicação, a mensagem é entregue a todos os assinantes do tópico, sem importar a quantidade de assinantes ou suas localizações geográficas. Essa funcionalidade se mostra especialmente valiosa em situações onde a disseminação ágil e confiável de informações é essencial para diversas partes interessadas.
+
+Além disso, o Google Cloud Pub/Sub oferece uma integração com outros serviços dentro do ecossistema do Google Cloud, incluindo o BigQuery. Essa integração possibilita a configuração do fluxo de mensagens do Pub/Sub para que elas sejam automaticamente direcionadas a tabelas do BigQuery. 
