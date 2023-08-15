@@ -8,7 +8,7 @@ O **Google Cloud Pub/Sub** é um serviço de mensagens assíncrono no Google Clo
 
 1.  **Crie um novo projeto no Google Cloud:** O Projeto é um ambiente no Google Cloud Platform que contém recursos e serviços. Cada projeto é identificado por um `project_id`, que é um identificador único para rastrear e gerenciar os recursos dentro do projeto.
     
-2.  **Ative o Serviço:** Dentro do projeto, ative o serviço Google Cloud Pub/Sub. 
+2.  **Ative o Serviço:** Dentro do projeto, ative o serviço Google Cloud Pub/Sub e crie um tópico.
     
 3.  **Configuração de Identificação:** Configure a autenticação usando informações da conta de serviço. Isso geralmente envolve um arquivo JSON que contém as credenciais necessárias.
 
