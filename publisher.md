@@ -9,44 +9,49 @@ O **Google Cloud Pub/Sub** é um serviço de mensagens assíncrono no Google Clo
     
 2.  **Ative o Serviço:** Dentro do projeto, ative o serviço Google Cloud Pub/Sub e crie um tópico.
     
-3.  **Configuração de Identificação:** Configure a autenticação usando informações da conta de serviço. Isso geralmente envolve um arquivo JSON que contém as credenciais necessárias.
+3.  **Configuração de Identificação:**  Crie uma conta de serviço para o projeto. Após criar a conta de serviço, exporte a key em um arquivo JSON. Após a exportação da key, vá na interface do PubSub e adicione a conta de serviço do projeto criado anteriormente nas permissões do tópico PubSub.
 
 #### Código Publicador:
 
 Vejamos um código que ilustra o processo de publicar uma mensagem simples em um tópico no Google Cloud Pub/Sub.
 ```py
-# Importa os módulos necessários
-import os
-import json
-
-# Importa as classes do Google Cloud Pub/Sub e de autenticação JWT
+# Importa o módulo pubsub_v1 da biblioteca google.cloud
 from google.cloud import pubsub_v1
-from google.auth import jwt
 
-# Carrega as informações da conta de serviço a partir de um arquivo JSON
-service_account_info = json.load(open("service-account-info.json"))
+# Importa o módulo service_account da biblioteca google.oauth2
+from google.oauth2 import service_account
 
-# Cria as credenciais JWT a partir das informações da conta de serviço
-credentials = jwt.Credentials.from_service_account_info(service_account_info)
+# Cria as credenciais a partir das informações da conta de serviço
+credentials = (
+    service_account
+    .Credentials
+    .from_service_account_file("docs/key_json_service_account.json")
+)
 
-# Cria um cliente do Pub/Sub para publicadores usando as credenciais 
+# Obtém o ID do projeto a partir das credenciais
+project_id = credentials.project_id
+
+# Define o nome do tópico
+topic_name = 'topic-name'
+
+# Cria um cliente de publicador (publisher) usando as credenciais
 publisher = pubsub_v1.PublisherClient(credentials=credentials)
 
-# Define o ID do projeto e o nome do tópico
-project_id = 'GOOGLE_CLOUD_PROJECT_ID'
-topic = 'TOPIC_NAME'
+# Cria o caminho completo do tópico a ser usado
+topic_path = publisher.topic_path(project_id, topic_name)
 
-# Cria o nome completo do tópico a ser criado usando f-strings
-topic_name = f'projects/{project_id}/topics/{topic}'
+# Define os dados da mensagem a ser publicada
+message_data = b'Hello from the outher side'
 
-# Cria um novo tópico no Google Cloud Pub/Sub
-publisher.create_topic(name=topic_name)
-
-# Publica uma mensagem no tópico especificado
-future = publisher.publish(topic_name, b'My first message!', spam='eggs')
+# Publica a mensagem no tópico
+future = publisher.publish(topic_path, data=message_data)
 
 # Aguarda a conclusão da publicação da mensagem
 future.result()
+
+# Imprime uma mensagem indicando que a mensagem foi publicada
+print(f"Mensagem publicada no tópico '{topic_path}': {message_data.decode('utf-8')}")
+
 ```
 Após a publicação, a mensagem é entregue a todos os assinantes do tópico, sem importar a quantidade de assinantes ou suas localizações geográficas. Essa funcionalidade se mostra especialmente valiosa em situações onde a disseminação ágil e confiável de informações é essencial para diversas partes interessadas.
 
