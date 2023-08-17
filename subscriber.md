@@ -7,55 +7,53 @@ O **Google Cloud Pub/Sub** é um serviço de mensagens assíncrono no Google Clo
 
 1.  **Crie um novo projeto no Google Cloud:** O Projeto é um ambiente no Google Cloud Platform que contém recursos e serviços. Cada projeto é identificado por um `project_id`, que é um identificador único para rastrear e gerenciar os recursos dentro do projeto.
     
-2.  **Ative o Serviço:** Dentro do projeto, ative o serviço Google Cloud Pub/Sub. 
+2.  **Ative o Serviço:** Dentro do projeto, ative o serviço Google Cloud Pub/Sub e crie um assinatura nova.
     
-3.  **Configuração de Identificação:** Configure a autenticação usando informações da conta de serviço. Isso geralmente envolve um arquivo JSON que contém as credenciais necessárias.
+3.  **Configuração de Autenticação:** Crie uma conta de serviço para o projeto. Após criar a conta de serviço, exporte a key em um arquivo JSON. Após a exportação da key, vá na interface do PubSub e adicione a conta de serviço do projeto criado anteriormente nas permissões da assinatura PubSub.
 
 #### Código Assinante:
 
 Vejamos um código que ilustra o processo de assinatura de um tópico no Google Cloud Pub/Sub.
 ```py
-# Importa os módulos necessários
-import os
-import json
-
 # Importa as classes do Google Cloud Pub/Sub e de autenticação JWT
 from google.cloud import pubsub_v1
-from google.auth import jwt
+from google.oauth2 import service_account
 
-# Carrega as informações da conta de serviço a partir de um arquivo JSON
-service_account_info = json.load(open("service-account-info.json"))
+# Cria as credenciais a partir das informações da conta de serviço
+credentials = (
+    service_account
+    .Credentials
+    .from_service_account_file("docs/key_json_service_account.json")
+)
 
-# Cria as credenciais JWT a partir das informações da conta de serviço
-credentials = jwt.Credentials.from_service_account_info(service_account_info)
+# Obtém o ID do projeto a partir das credenciais
+project_id = credentials.project_id
 
-# Define o ID do projeto e o nome do tópico
-project_id = 'GOOGLE_CLOUD_PROJECT_ID'  # Substitua pelo ID do seu projeto no Google Cloud
-topic = 'TOPIC_NAME'  # Substitua pelo nome do tópico que você deseja criar/publicar
-subscription = 'SUBSCRIPTION_NAME'  # Substitua pelo nome da assinatura que você deseja criar
+# Define o nome da assinatura
+subscription_name = 'topic-name'
 
-# Cria o nome completo do tópico e da assinatura a serem criados usando f-strings
-topic_name = f'projects/{project_id}/topics/{topic}'
-subscription_name = f'projects/{project_id}/subscriptions/{subscription}'
+# Cria um cliente de assinante (subscriber) usando as credenciais
+subscriber = pubsub_v1.SubscriberClient(credentials=credentials)
+
+# Cria o caminho completo da assinatura a ser usada
+subscription_path = subscriber.subscription_path(project_id, subscription_name)
 
 # Define uma função de callback para processar as mensagens recebidas
 def callback(message):
-    print(message.data)  # Imprime os dados da mensagem recebida
-    message.ack()        # Confirma o recebimento da mensagem
+    print(f"Received message: {message.data.decode('utf-8')}")
+    message.ack()  # Confirma o recebimento da mensagem
 
-# Cria um cliente de assinante (subscriber)
-with pubsub_v1.SubscriberClient() as subscriber:
-    # Cria uma nova assinatura para o tópico especificado
-    subscriber.create_subscription(
-        name=subscription_name, 
-        topic=topic_name)
-    
-    # Inicia a subscrição à assinatura criada, passando a função de callback
-    future = subscriber.subscribe(subscription_name, callback)
+# Inicia a subscrição à assinatura criada, passando a função de callback
+future = subscriber.subscribe(subscription_path, callback)
+
+# Imprime uma mensagem indicando que o script está aguardando mensagens
+print(f"Aguardando mensagens do tópico '{subscription_path}'...")
 
 try:
-    future.result()  # Aguarda até que o resultado esteja disponível
+    future.result()  # Aguarda até que o resultado do futuro (future) esteja disponível
 except KeyboardInterrupt:
     future.cancel()  # Cancela a subscrição se houver uma interrupção de teclado
 
 ```
+
+Note que é fundamental que a conta de serviço criada para o projeto tenha permissão adequada na assinatura PubSub, caso contrário irá ser gerado um erro por falta de permissão.
