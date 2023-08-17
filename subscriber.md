@@ -1,3 +1,4 @@
+
 ## Assinante - PubSub 
 
 O **Google Cloud Pub/Sub** é um serviço de mensagens assíncrono no Google Cloud Platform. Ele permite que aplicativos se comuniquem através de tópicos e assinantes. Os publicadores enviam mensagens para tópicos, e os assinantes se inscrevem nesses tópicos para receber as mensagens. O serviço garante a entrega confiável e escalável das mensagens, permitindo o processamento assíncrono por parte dos assinantes. O Pub/Sub simplifica a comunicação em sistemas distribuídos e lida automaticamente com a entrega de mensagens.
@@ -9,6 +10,7 @@ O **Google Cloud Pub/Sub** é um serviço de mensagens assíncrono no Google Clo
 2.  **Ative o Serviço:** Dentro do projeto, ative o serviço Google Cloud Pub/Sub e crie uma assinatura nova.
     
 3.  **Configuração de Autenticação:** Crie uma conta de serviço para o projeto. Após criar a conta de serviço, exporte a key em um arquivo JSON. Após a exportação da key, vá na interface do PubSub e adicione a conta de serviço do projeto criado anteriormente nas permissões da assinatura PubSub.
+
 
 #### Código Assinante:
 
@@ -56,3 +58,4 @@ except KeyboardInterrupt:
 ```
 
 Note que é fundamental que a conta de serviço criada para o projeto tenha permissão adequada na assinatura PubSub, caso contrário irá ser gerado um erro por falta de permissão.
+
