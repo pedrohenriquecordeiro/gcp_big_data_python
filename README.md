@@ -1,2 +1,2 @@
-# pubsub_python
-Repositório com casos de uso em python utilizando os serviços Pub/Sub do Google Cloud Plataform.
+# Google Cloud Plataform with Python
+Repositório com casos de uso em python utilizando os serviços do Google Cloud Plataform.
