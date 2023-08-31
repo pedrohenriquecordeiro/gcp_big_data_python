@@ -10,9 +10,9 @@ O *Google Dataproc* é um serviço gerenciado que permite executar clusters do A
 
 ### Detalhes do comando gcloud
 
-1. **gcloud dataproc clusters create**: Isso indica que você está usando o Google Cloud SDK para criar um novo cluster no Google Dataproc.
+1. `gcloud dataproc clusters create`: Isso indica que você está usando o Google Cloud SDK para criar um novo cluster no Google Dataproc.
 
-2. **owshq-apache-spark**: Este é o nome que você está dando ao cluster que será criado. Você pode substituir "owshq-apache-spark" pelo nome desejado para o seu cluster.
+2. `owshq-apache-spark`: Este é o nome que você está dando ao cluster que será criado. Você pode substituir "owshq-apache-spark" pelo nome desejado para o seu cluster.
 
 3. `--enable-component-gateway`: Essa opção indica que você deseja habilitar o componente de gateway para o cluster. Isso permite que você acesse interfaces da web de componentes individuais do cluster, como o Spark UI, através de um proxy seguro.
 
