@@ -4,15 +4,24 @@ O *Google Dataproc* é um serviço gerenciado que permite executar clusters do A
 ## Comando gcloud que aloca um cluster no serviço Google Dataproc
 
 ```bash
-  gcloud dataproc clusters create owshq-apache-spark --enable-component-gateway --region us-east1 --zone us-east1-c --master-machine-type n1-standard-2 --master-boot-disk-size 500 --num-workers 2 --worker-machine-type n1-standard-2 --worker-boot-disk-size 500 --image-version 2.0-debian10 --scopes 'https://www.googleapis.com/auth/cloud-platform' --project silver-charmer-243611
-
+  gcloud dataproc clusters create cluster-dataproc-phcj \
+    --enable-component-gateway \
+    --region us-east1 \
+    --zone us-east1-c \
+    --master-machine-type n1-standard-2 \
+    --master-boot-disk-size 500 --num-workers 2 \
+    --worker-machine-type n1-standard-2 \
+    --worker-boot-disk-size 500 \
+    --image-version 2.0-debian10 \
+    --scopes 'https://www.googleapis.com/auth/cloud-platform' \
+    --project project_name
 ```
 
-### Detalhes do comando gcloud
+### Detalhes do comando
 
 1. `gcloud dataproc clusters create`: Isso indica que você está usando o Google Cloud SDK para criar um novo cluster no Google Dataproc.
 
-2. `owshq-apache-spark`: Este é o nome que você está dando ao cluster que será criado. Você pode substituir "owshq-apache-spark" pelo nome desejado para o seu cluster.
+2. `cluster-dataproc-phcj`: Este é o nome que você está dando ao cluster que será criado. Você pode substituir "cluster-dataproc-phcj" pelo nome desejado para o seu cluster.
 
 3. `--enable-component-gateway`: Essa opção indica que você deseja habilitar o componente de gateway para o cluster. Isso permite que você acesse interfaces da web de componentes individuais do cluster, como o Spark UI, através de um proxy seguro.
 
@@ -34,8 +43,57 @@ O *Google Dataproc* é um serviço gerenciado que permite executar clusters do A
 
 12. `--scopes 'https://www.googleapis.com/auth/cloud-platform'`: Define os escopos de acesso para o cluster. Neste caso, o escopo 'https://www.googleapis.com/auth/cloud-platform' é configurado, o que permitirá ao cluster acessar recursos na Google Cloud Platform.
 
-13. `--project silver-charmer-243611`: Especifica o projeto do Google Cloud onde o cluster será criado. Substitua "silver-charmer-243611" pelo ID do projeto correto.
+13. `--project project_name`: Especifica o projeto do Google Cloud onde o cluster será criado. Substitua "project_name" pelo ID do projeto correto.
 
 
+Após alocado o cluster podemos submeter o codigo pyspark ao cluster com seguinte comando:
 
+```bash
+  gcloud dataproc jobs submit pyspark --cluster=cluster-dataproc-phcj dataproc.py
+```
 
+Ao executar o comando é gerado um id para o job. Para acompanhar o log de execução do job podemos usar o seguinte comando:
+
+```bash
+gcloud dataproc jobs wait <job_id> --project silver-charmer-243611 --region us-east1
+```
+
+Ao final da execução do job, podemos desalocar o cluster.
+
+```bash
+gcloud dataproc clusters delete cluster-dataproc-phcj --region=us-east1
+```
+
+## Comando gcloud que aloca um cluster SERVELESS no serviço Google Dataproc
+
+Uma opção incrivel é alocar o cluster sem se preocupar com os requisitos técnicos, e o GCP provem essa possibilidade. O comando seguinte permite isso.
+
+```bash
+
+gcloud dataproc batches submit pyspark dataproc.py \
+    --batch=batch-dataproc \
+    --deps-bucket=gs://phcj-code-repository \
+    --region=us-east1 \
+    --py-files='dataproc.py'
+
+```
+
+### Detalhes do comando
+
+- `gcloud dataproc batches submit pyspark`: Isso indica que você está usando o Google Cloud SDK (`gcloud`) para submeter um trabalho do tipo pyspark (Python com Apache Spark) para o serviço Google Dataproc Batch.
+
+- `dataproc.py`: Este é o nome do arquivo Python que contém o código do ETL para as análises de avaliações do Yelp. Certifique-se de que esse arquivo exista no diretório atual ou forneça o caminho correto.
+
+- `--batch=batch-dataproc`: Define o nome do lote (batch) do trabalho. Nesse caso, o nome é "batch-dataproc". Esse nome é usado para identificar o lote no Dataproc.
+
+- `--deps-bucket=gs://phcj-code-repository`: Especifica o bucket do Google Cloud Storage onde as dependências do trabalho estão localizadas. Nesse caso, o caminho do bucket é "gs://phcj-code-repository".
+
+- `--region=us-east1`: Especifica a região onde o trabalho será executado. Nesse caso, o trabalho será executado na região us-east1 (leste dos EUA).
+
+- `--py-files='dataproc.py'`: Lista os arquivos Python que devem ser distribuídos e disponibilizados para o ambiente de execução do Spark. Isso garante que o arquivo de script principal e suas dependências sejam acessíveis durante a execução.
+
+Para acompanhar o log de execução do job podemos usar o seguinte comando:
+
+```bash
+gcloud dataproc batches wait batch-dataproc --project project_name --region us-east1
+```
