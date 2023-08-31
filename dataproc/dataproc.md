@@ -1,7 +1,7 @@
 
-O *Google Dataproc* é um serviço gerenciado que permite executar clusters do Apache Spark e Apache Hadoop de maneira eficiente na infraestrutura do Google Cloud. Vou explicar cada parte do comando em detalhes:
+O *Google Dataproc* é um serviço gerenciado que permite executar clusters do Apache Spark e Apache Hadoop de maneira eficiente na infraestrutura do Google Cloud. 
 
-## Aloca um cluster no serviço Google Dataproc
+## Comando gcloud que aloca um cluster no serviço Google Dataproc
 
 ```bash
   gcloud dataproc clusters create owshq-apache-spark --enable-component-gateway --region us-east1 --zone us-east1-c --master-machine-type n1-standard-2 --master-boot-disk-size 500 --num-workers 2 --worker-machine-type n1-standard-2 --worker-boot-disk-size 500 --image-version 2.0-debian10 --scopes 'https://www.googleapis.com/auth/cloud-platform' --project silver-charmer-243611
