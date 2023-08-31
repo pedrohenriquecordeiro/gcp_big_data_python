@@ -6,8 +6,8 @@ from pyspark.sql.functions import col, lag, avg
 spark = SparkSession.builder.appName("GCS_to_BQ").getOrCreate()
 
 # Define as configurações do Google Cloud Storage
-gcs_bucket = "seu-bucket"
-gcs_path = "caminho/para/seu/arquivo.csv"
+gcs_bucket = "landing-zone-phcj"
+gcs_path = "gold_prices.csv"
 
 # Lê o CSV do Google Cloud Storage
 df = spark.read.csv(f"gs://{gcs_bucket}/{gcs_path}", header=True)
@@ -25,7 +25,7 @@ window_spec_5days = Window.orderBy("Date").rowsBetween(-4, 0)
 df = df.withColumn("Close_Variation_Avg_5days", avg(col("Close_Variation")).over(window_spec_5days))
 
 # Escreve o resultado na tabela do BigQuery
-table_name = "seu_projeto.seu_dataset.sua_tabela"
+table_name = "project-tester-2023.conjunto_dados_phcj.gold_prices_analytics"
 df.write.format("bigquery").option("table", table_name).mode("overwrite").save()
 
 # Encerra a sessão Spark
