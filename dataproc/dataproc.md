@@ -64,6 +64,9 @@ Ao final da execução do job, podemos desalocar o cluster.
 gcloud dataproc clusters delete cluster-dataproc-phcj --region=us-east1
 ```
 
+<br>
+<br>
+
 ## Comando gcloud que aloca um cluster SERVELESS no serviço Google Dataproc
 
 Uma opção incrivel é alocar o cluster sem se preocupar com os requisitos técnicos, e o GCP provem essa possibilidade. O comando seguinte permite isso.
